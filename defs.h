@@ -1,0 +1,18 @@
+//
+// Created by ben on 5/6/24.
+//
+
+#ifndef MYRAYLIBGAME_DEFS_H
+#define MYRAYLIBGAME_DEFS_H
+
+#define WINDOW_WIDTH 1920
+#define WINDOW_HEIGHT 1080
+
+#define PADDLE_START_X 10
+#define PADDLE_START_Y 60
+#define PADDLE_WIDTH 25
+#define PADDLE_HEIGHT 300
+
+#define PLAYER_SPEED 8
+
+#endif //MYRAYLIBGAME_DEFS_H
