@@ -21,10 +21,10 @@
 *
 ********************************************************************************************/
 
-#include <stdio.h>
 #include <stdlib.h>
 #include "raylib.h"
 #include "init.c"
+#include "renderer.c"
 #include "structs.h"
 
 //------------------------------------------------------------------------------------
@@ -40,58 +40,7 @@ int main(void)
 
     init();
 
-    Rectangle paddle1_rect = {PADDLE_START_X,PADDLE_START_Y,PADDLE_WIDTH,PADDLE_HEIGHT};
-    Paddle paddle1 = {paddle1_rect, BLACK};
-
-    Rectangle paddle2_rect = {WINDOW_WIDTH - (PADDLE_START_X + PADDLE_WIDTH),
-                              PADDLE_START_Y,PADDLE_WIDTH,PADDLE_HEIGHT};
-    Paddle paddle2 = {paddle2_rect, BLACK};
-
-    Rectangle ball_rect = {(int)(WINDOW_WIDTH/2), (int)(WINDOW_HEIGHT/2), 50, 50};
-    Ball ball = {ball_rect, WHITE};
-
-
-
-    // Main game loop
-    while (!WindowShouldClose())    // Detect window close button or ESC key
-    {
-        // Update
-
-        // paddle1
-        if (IsKeyDown(KEY_S)) {
-            paddle1.rect.y += PLAYER_SPEED;
-            handleYBorder(&paddle1);
-        }
-        if (IsKeyDown(KEY_W)) {
-            paddle1.rect.y -= PLAYER_SPEED;
-            handleYBorder(&paddle1);
-        }
-
-
-        // paddle2
-
-        if (IsKeyDown(KEY_DOWN)) {
-            paddle2.rect.y += PLAYER_SPEED;
-            handleYBorder(&paddle2);
-        }
-        if (IsKeyDown(KEY_UP)) {
-            paddle2.rect.y -= PLAYER_SPEED;
-            handleYBorder(&paddle2);
-        }
-
-        // Draw
-
-        BeginDrawing();
-
-        ClearBackground(DARKGRAY);
-
-        drawPaddle(paddle1);
-        drawPaddle(paddle2);
-        DrawRectangleRec(ball.rect, ball.color);
-
-        EndDrawing();
-
-    }
+    renderer();
 
     // De-Initialization
     //--------------------------------------------------------------------------------------
@@ -99,22 +48,6 @@ int main(void)
     //--------------------------------------------------------------------------------------
 
     exit(EXIT_SUCCESS);
-}
-
-void drawPaddle(Paddle p) {
-    DrawRectangleRec(p.rect, p.color);
-}
-
-void handleYBorder(Paddle *p) {
-    if (p->rect.y >= WINDOW_HEIGHT - p->rect.height) {
-        p->rect.y = WINDOW_HEIGHT - p->rect.height;
-    }
-    else if (p->rect.y <= 0) {
-        p->rect.y = 0;
-    }
-    else {
-        return;
-    }
 }
 
 
