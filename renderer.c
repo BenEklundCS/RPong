@@ -12,6 +12,7 @@ void handlePaddleYBorder(Paddle *p);
 void handleBallYBorder(Ball *b);
 void handleBallXBorder(Ball *b);
 
+// Main renderer and render loop
 void renderer(void) {
 
     Paddle paddle1 = {{PADDLE_START_X,
@@ -47,11 +48,14 @@ void renderer(void) {
             pause = !pause;
         }
 
+        // If the game is not paused, then handle events
         if (!pause)
         {
+            // Move the ball
             ball.rect.x += ball.speed.x * GetFrameTime();
             ball.rect.y += ball.speed.y * GetFrameTime();
 
+            // Check for ball border collisions
             handleBallYBorder(&ball);
             handleBallXBorder(&ball);
 
@@ -67,7 +71,7 @@ void renderer(void) {
                 ball.speed.x *= -1.0f;
             }
 
-            // paddle1
+            // paddle1 movement
             if (IsKeyDown(KEY_S)) {
                 paddle1.rect.y += PADDLE_SPEED;
                 handlePaddleYBorder(&paddle1);
@@ -77,7 +81,7 @@ void renderer(void) {
                 handlePaddleYBorder(&paddle1);
             }
 
-            // paddle2
+            // paddle2 movement
             if (IsKeyDown(KEY_DOWN)) {
                 paddle2.rect.y += PADDLE_SPEED;
                 handlePaddleYBorder(&paddle2);
