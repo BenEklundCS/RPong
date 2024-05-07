@@ -15,7 +15,7 @@
 #define PADDLE_WIDTH 25
 #define PADDLE_HEIGHT 300
 #define BALL_RADIUS 25
-#define BALL_SPEED 10
+#define BALL_SPEED 600
 #define PADDLE_SPEED 16
 
 #endif //MYRAYLIBGAME_DEFS_H

@@ -5,23 +5,31 @@
 #include "defs.h"
 #include "structs.h"
 
-
 // Private defs
 void drawPaddle(Paddle p);
 void drawBall(Ball b);
-void handleYBorder(Paddle *p);
+void handlePaddleYBorder(Paddle *p);
 void handleBallYBorder(Ball *b);
+void handleBallXBorder(Ball *b);
 
 void renderer(void) {
 
-
-    Paddle paddle1 = {{PADDLE_START_X, PADDLE_START_Y, PADDLE_WIDTH, PADDLE_HEIGHT},
+    Paddle paddle1 = {{PADDLE_START_X,
+                             PADDLE_START_Y,
+                             PADDLE_WIDTH,
+                             PADDLE_HEIGHT},
                       BLACK};
 
-    Paddle paddle2 = {{WINDOW_WIDTH - (PADDLE_START_X + PADDLE_WIDTH), PADDLE_START_Y, PADDLE_WIDTH, PADDLE_HEIGHT},
+    Paddle paddle2 = {{WINDOW_WIDTH - (PADDLE_START_X + PADDLE_WIDTH),
+                             PADDLE_START_Y,
+                             PADDLE_WIDTH,
+                             PADDLE_HEIGHT},
                       BLACK};
 
-    Ball ball = {{(int)(WINDOW_WIDTH/2), (int)(WINDOW_HEIGHT/2), BALL_RADIUS, BALL_RADIUS},
+    Ball ball = {{(int)(WINDOW_WIDTH/2),
+                        (int)(WINDOW_HEIGHT/2),
+                        BALL_RADIUS,
+                        BALL_RADIUS},
                  WHITE,
                  {BALL_SPEED, (int)(BALL_SPEED/2)}};
 
@@ -30,7 +38,7 @@ void renderer(void) {
     bool moving_right = true;
 
     // Main game loop
-    while (!WindowShouldClose())    // Detect window close button or ESC key
+    while (!WindowShouldClose()) // Detect window close button or ESC key
     {
         // Update
 
@@ -41,41 +49,42 @@ void renderer(void) {
 
         if (!pause)
         {
-            ball.rect.x += ball.velocity.x;
-            ball.rect.y += ball.velocity.y;
+            ball.rect.x += ball.speed.x * GetFrameTime();
+            ball.rect.y += ball.speed.y * GetFrameTime();
 
             handleBallYBorder(&ball);
+            handleBallXBorder(&ball);
 
             // Check walls collision for bouncing
             if (CheckCollisionRecs(ball.rect, paddle1.rect) && !moving_right) {
                 TraceLog(LOG_INFO, "Collided with paddle1.");
                 moving_right = true;
-                ball.velocity.x *= -1.0f;
+                ball.speed.x *= -1.0f;
             }
             if (CheckCollisionRecs(ball.rect, paddle2.rect) && moving_right) {
                 TraceLog(LOG_INFO, "Collided with paddle2.");
                 moving_right = false;
-                ball.velocity.x *= -1.0f;
+                ball.speed.x *= -1.0f;
             }
 
             // paddle1
             if (IsKeyDown(KEY_S)) {
                 paddle1.rect.y += PADDLE_SPEED;
-                handleYBorder(&paddle1);
+                handlePaddleYBorder(&paddle1);
             }
             if (IsKeyDown(KEY_W)) {
                 paddle1.rect.y -= PADDLE_SPEED;
-                handleYBorder(&paddle1);
+                handlePaddleYBorder(&paddle1);
             }
 
             // paddle2
             if (IsKeyDown(KEY_DOWN)) {
                 paddle2.rect.y += PADDLE_SPEED;
-                handleYBorder(&paddle2);
+                handlePaddleYBorder(&paddle2);
             }
             if (IsKeyDown(KEY_UP)) {
                 paddle2.rect.y -= PADDLE_SPEED;
-                handleYBorder(&paddle2);
+                handlePaddleYBorder(&paddle2);
             }
         }
 
@@ -94,15 +103,17 @@ void renderer(void) {
     }
 }
 
+// Custom draw for paddle struct
 void drawPaddle(Paddle p) {
     DrawRectangleRec(p.rect, p.color);
 }
 
+// Custom draw for ball struct
 void drawBall(Ball b) {
     DrawCircle((int)b.rect.x, (int)b.rect.y, b.rect.width, b.color);
 }
 
-void handleYBorder(Paddle *p) {
+void handlePaddleYBorder(Paddle *p) {
     // Bottom of the screen
     if (p->rect.y >= WINDOW_HEIGHT - p->rect.height) {
         p->rect.y = WINDOW_HEIGHT - p->rect.height;
@@ -117,16 +128,28 @@ void handleYBorder(Paddle *p) {
     }
 }
 
+void handleBallXBorder(Ball *b) {
+    // Off screen
+    if ((b->rect.x >= WINDOW_WIDTH + (int)(WINDOW_WIDTH/4)) || (b->rect.x <= 0 - (int)(WINDOW_WIDTH/4))) {
+        b->rect.x = (int)(WINDOW_WIDTH/2);
+        b->rect.y = (int)(WINDOW_HEIGHT/2);
+    }
+    // On screen
+    else {
+        return;
+    }
+}
+
 void handleBallYBorder(Ball *b) {
     // Bottom of the screen
     if (b->rect.y >= WINDOW_HEIGHT - b->rect.height) {
         b->rect.y = WINDOW_HEIGHT - b->rect.height;
-        b->velocity.y *= -1.0f;
+        b->speed.y *= -1.0f;
     }
     // Top of the screen
     else if (b->rect.y <= 0) {
         b->rect.y = 0;
-        b->velocity.y *= -1.0f;
+        b->speed.y *= -1.0f;
     }
     // Didn't collide
     else {

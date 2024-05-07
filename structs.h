@@ -15,7 +15,7 @@ typedef struct {
 typedef struct {
     Rectangle rect;
     Color color;
-    Vector2 velocity;
+    Vector2 speed;
 } Ball;
 
 #endif //MYRAYLIBGAME_STRUCTS_H
