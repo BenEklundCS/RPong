@@ -4,13 +4,7 @@
 
 #include "defs.h"
 #include "structs.h"
-
-// Private defs
-void drawPaddle(Paddle p);
-void drawBall(Ball b);
-void handlePaddleYBorder(Paddle *p);
-void handleBallYBorder(Ball *b);
-void handleBallXBorder(Ball *b);
+#include "renderer.h"
 
 // Main renderer and render loop
 void renderer(void) {
@@ -31,7 +25,7 @@ void renderer(void) {
                         (int)(WINDOW_HEIGHT/2),
                         BALL_RADIUS,
                         BALL_RADIUS},
-                 WHITE,
+                 DARKPURPLE,
                  {BALL_SPEED, (int)(BALL_SPEED/2)}};
 
 
@@ -56,38 +50,39 @@ void renderer(void) {
             ball.rect.y += ball.speed.y * GetFrameTime();
 
             // Check for ball border collisions
-            handleBallYBorder(&ball);
-            handleBallXBorder(&ball);
+            handleBallBorders(&ball);
 
             // Check walls collision for bouncing
             if (CheckCollisionRecs(ball.rect, paddle1.rect) && !moving_right) {
                 TraceLog(LOG_INFO, "Collided with paddle1.");
                 moving_right = true;
+                ball.speed.x *= 1.1f;
                 ball.speed.x *= -1.0f;
             }
             if (CheckCollisionRecs(ball.rect, paddle2.rect) && moving_right) {
                 TraceLog(LOG_INFO, "Collided with paddle2.");
                 moving_right = false;
+                ball.speed.x *= 1.1f;
                 ball.speed.x *= -1.0f;
             }
 
             // paddle1 movement
             if (IsKeyDown(KEY_S)) {
-                paddle1.rect.y += PADDLE_SPEED;
+                paddle1.rect.y += PADDLE_SPEED * GetFrameTime();
                 handlePaddleYBorder(&paddle1);
             }
             if (IsKeyDown(KEY_W)) {
-                paddle1.rect.y -= PADDLE_SPEED;
+                paddle1.rect.y -= PADDLE_SPEED * GetFrameTime();
                 handlePaddleYBorder(&paddle1);
             }
 
             // paddle2 movement
             if (IsKeyDown(KEY_DOWN)) {
-                paddle2.rect.y += PADDLE_SPEED;
+                paddle2.rect.y += PADDLE_SPEED * GetFrameTime();
                 handlePaddleYBorder(&paddle2);
             }
             if (IsKeyDown(KEY_UP)) {
-                paddle2.rect.y -= PADDLE_SPEED;
+                paddle2.rect.y -= PADDLE_SPEED * GetFrameTime();
                 handlePaddleYBorder(&paddle2);
             }
         }
@@ -130,6 +125,11 @@ void handlePaddleYBorder(Paddle *p) {
     else {
         return;
     }
+}
+
+void handleBallBorders(Ball *b) {
+    handleBallXBorder(b);
+    handleBallYBorder(b);
 }
 
 void handleBallXBorder(Ball *b) {
