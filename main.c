@@ -31,10 +31,6 @@
 // Program main entry point
 //------------------------------------------------------------------------------------
 
-// private defs
-void drawPaddle(Paddle p);
-void handleYBorder(Paddle *p);
-
 int main(void)
 {
 

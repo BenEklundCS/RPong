@@ -5,7 +5,10 @@
 #include "defs.h"
 #include "structs.h"
 
+
+// Private defs
 void drawPaddle(Paddle p);
+void drawBall(Ball b);
 void handleYBorder(Paddle *p);
 void handleBallYBorder(Ball *b);
 
@@ -20,7 +23,7 @@ void renderer(void) {
 
     Ball ball = {{(int)(WINDOW_WIDTH/2), (int)(WINDOW_HEIGHT/2), BALL_RADIUS, BALL_RADIUS},
                  WHITE,
-                 {BALL_SPEED, 15}};
+                 {BALL_SPEED, (int)(BALL_SPEED/2)}};
 
 
     bool pause = false;
@@ -84,7 +87,7 @@ void renderer(void) {
 
         drawPaddle(paddle1);
         drawPaddle(paddle2);
-        DrawRectangleRec(ball.rect, ball.color);
+        drawBall(ball);
 
         EndDrawing();
 
@@ -95,27 +98,37 @@ void drawPaddle(Paddle p) {
     DrawRectangleRec(p.rect, p.color);
 }
 
+void drawBall(Ball b) {
+    DrawCircle((int)b.rect.x, (int)b.rect.y, b.rect.width, b.color);
+}
+
 void handleYBorder(Paddle *p) {
+    // Bottom of the screen
     if (p->rect.y >= WINDOW_HEIGHT - p->rect.height) {
         p->rect.y = WINDOW_HEIGHT - p->rect.height;
     }
+    // Top of the screen
     else if (p->rect.y <= 0) {
         p->rect.y = 0;
     }
+    // Didn't collide
     else {
         return;
     }
 }
 
 void handleBallYBorder(Ball *b) {
+    // Bottom of the screen
     if (b->rect.y >= WINDOW_HEIGHT - b->rect.height) {
         b->rect.y = WINDOW_HEIGHT - b->rect.height;
         b->velocity.y *= -1.0f;
     }
+    // Top of the screen
     else if (b->rect.y <= 0) {
         b->rect.y = 0;
         b->velocity.y *= -1.0f;
     }
+    // Didn't collide
     else {
         return;
     }
